@@ -27,7 +27,7 @@ int inputWaitSecs();
 
 /*
 Start splitting center goal
-Drive forward 30in
+Drive forward 35in
 Check IR
 	If IR is present - Position 1
 	If Not
@@ -57,17 +57,34 @@ task main()
 	}
 	wait1Msec(waitSecs*1000); // Wait based on the selected value
 
-	driveInches(35,50,50); 
-	print(SensorValue[ir]);
+	driveInches(35,50,50); // Drive forward 35 inches
+	print(SensorValue[ir]); // Display the value of the IR sensor
 	wait1Msec(500);
-	if(SensorValue[ir] >= 4 && SensorValue[ir] <= 6){
+	if(SensorValue[ir] >= 4 && SensorValue[ir] <= 6){ // If the IR beacon is present, drive to position 1
 		PlaySound(soundBeepBeep);
 		turn(RIGHT,90);
 		driveInches(12,50,50);
 		turn(LEFT,90);
 		driveInches(48,50,50);
 	}
-	else{
+
+/* THIS COPY OF THE COMMENT AT THE TOP IS TO AVOID SCROLLING
+Start splitting center goal
+Drive forward 35in
+Check IR
+	If IR is present - Position 1
+	If Not
+		Drive backward
+		Turn Left 45
+		Drive forward 35
+		Turn Right 90
+		Check IR
+			If IR is present - Position 2
+			If Not (Position 3)
+				Turn right 45
+				Forward 36 in
+*/
+	else{ // If we can't find an IR beacon...
 		driveInches(-20,50,50);
 		turn(LEFT,45);
 		driveInches(35);
