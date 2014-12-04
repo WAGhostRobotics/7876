@@ -45,18 +45,19 @@ Check IR
 task main()
 {
 	eraseDisplay();
-	bool i = inputWaitForStart();//check for wait for start
+	bool i = inputWaitForStart(); // Check for wait for start
 	wait1Msec(500);
 
-	int waitSecs = inputWaitSecs();//Input wait seconds from display
+	// TODO: Shouldn't this NOT be asked if the user has decided not to wait for start?
+	int waitSecs = inputWaitSecs(); // Input wait seconds from display
 
 	if(i)
 	{
 		waitForStart();
 	}
-	wait1Msec(waitSecs*1000);	//Wait based on the selected value
+	wait1Msec(waitSecs*1000); // Wait based on the selected value
 
-	driveInches(35,50,50);
+	driveInches(35,50,50); 
 	print(SensorValue[ir]);
 	wait1Msec(500);
 	if(SensorValue[ir] >= 4 && SensorValue[ir] <= 6){
@@ -90,11 +91,12 @@ task main()
 
 }
 
-bool inputWaitForStart() {
+bool inputWaitForStart() { // Lets user specify whether he or she would like to wait for start
 	bool select = true;
 	eraseDisplay();
-	while(nNxtButtonPressed != 3) {
-		if(nNxtButtonPressed == 1) { //Right arrow
+	while(nNxtButtonPressed != 3) { // Keep going until someone presses the big orange button
+		// Toggle the select variable when the arrow buttons are pressed
+		if(nNxtButtonPressed == 1) {
 			select = !select;
 			PlaySound(soundBlip);
 			eraseDisplay();
@@ -106,28 +108,31 @@ bool inputWaitForStart() {
 			eraseDisplay();
 			wait1Msec(500);
 		}
+		// Print the state of the select variable
+		// TODO: What are "a" and "b?" Should they be strings?
 		if(select)
 			print(a, 2);
 		else
 			print(b, 2);
 	}
 	PlaySound(soundBlip);
+	// Return the value of select when the orange button is pressed.
 	return select;
 }
 
-int inputWaitSecs() {
+int inputWaitSecs() { // Lets user select the number of seconds to wait
 	int waitSecs = 0;
 	eraseDisplay();
 	print(waitSecs);
-	while(nNxtButtonPressed != 3) {
-		if(nNxtButtonPressed == 1) { //Right arrow
+	while(nNxtButtonPressed != 3) { // Wait until user presses the orange button
+		if(nNxtButtonPressed == 1) { // Right arrow increases the number of wait seconds
 			waitSecs++;
 			PlaySound(soundBlip);
 			eraseDisplay();
 			print(waitSecs);
 			wait1Msec(500);
 		}
-		else if(nNxtButtonPressed == 2) {
+		else if(nNxtButtonPressed == 2) { // Left arrow decreases the number of wait seconds
 			if(waitSecs > 0)
 			{
 				waitSecs--;
