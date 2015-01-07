@@ -134,29 +134,34 @@ task main()
 				motor[right] = 0;
 			}
 		}
-		if(abs(nMotorEncoder[motorD]) < inchesToEncoder(turnRadians(angle)))
+
+		if(joyStickMode == SINGLE_JOYSTICK) //One joystick
 		{
-			//if statement for the shortest route
-			if(angle > 3*PI/2)//turn left
+			//if encoder reading is less than the encoders needed to turn, keep turning
+			if(abs(nMotorEncoder[motorD]) < inchesToEncoder(turnRadians(angle)))
 			{
-				motor[motorD] = -getLeftPower();
-				motor[motorE] = getRightPower();
+				//if statement for the shortest route
+				if(angle > 3*PI/2)//turn left
+				{
+					motor[motorD] = -getLeftPower();
+					motor[motorE] = getRightPower();
+				}
+				else //turn right
+				{
+					motor[motorD] = getLeftPower();
+					motor[motorE] = -getRightPower();
+				}
 			}
-			else //turn right
+			else//robot has achieved the turn, start going forward
 			{
 				motor[motorD] = getLeftPower();
-				motor[motorE] = -getRightPower();
-			}
-		}
-		else
-		{
-				motor[motorD] = getLeftPower();
 				motor[motorE] = getRightPower();
+			}
 		}
 		//one button at a time
 		//First Controller Buttons
 		if(joy1Btn(9) == 1 || joy1Btn(10) == 1)
-		{ //Switch between dual and single joystick
+		{ //Switch between dual and single joystick,,l
 			PlayTone(1000,5);
 			joyStickMode = !joyStickMode;
 			wait1Msec(1000);
@@ -186,7 +191,6 @@ task main()
 		{
 			servo[bucket] = ServoValue[bucket] - 4;
 		}
-
 
 	}
 }

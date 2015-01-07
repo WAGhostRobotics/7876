@@ -1,15 +1,15 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     ultra,          sensorSONAR)
+#pragma config(Sensor, S3,     ir,             sensorHiTechnicIRSeeker1200)
 #pragma config(Motor,  mtr_S1_C1_1,     left,          tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     right,         tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     motorF,        tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_2,     motorG,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     motorH,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_1,     elevator,      tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     motorI,        tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C4_1,    jack1,                tServoStandard)
-#pragma config(Servo,  srvo_S1_C4_2,    jack2,                tServoStandard)
-#pragma config(Servo,  srvo_S1_C4_3,    bucket,               tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_1,    jack,                 tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_2,    bucket,               tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
@@ -24,7 +24,7 @@ Teleop 3565 (Name pending)
 */
 #include "JoystickDriver.c"
 #include "Standard_Drive.c";
-#include "nxtIO.h";
+//#include "nxtIO.h";
 
 void initializeRobot()
 {
@@ -49,7 +49,7 @@ int adjustValue(int joystickValue)
 task main()
 {
 	initializeRobot();
-	bool joyStickMode = SINGLE_JOYSTICK;
+	bool joyStickMode = DOUBLE_JOYSTICK;
 	while (true)
 	{
 		getJoystickSettings(joystick);
@@ -66,13 +66,13 @@ task main()
 			//one Joystick
 			if(sqrt(x*x+y*y) > 10)
 			{
-				motor[left] =			(((y * y * y + x * x * x) * 100) >> 22);
-				motor[right] =		(((y * y * y - x * x * x) * 100) >> 22);
+				motor[left] =			(((y * y * y + x * x * x) * 100) >> 21);
+				motor[right] =		(((y * y * y - x * x * x) * 100) >> 21);
 			}
 			else if (sqrt(x2*x2+y2*y2) > 10)
 			{
-				motor[left] =			(((y2 * y2 * y2 + x2 * x2 * x2) * 100) >> 22) / 2;
-				motor[right] =		(((y2 * y2 * y2 - x2 * x2 * x2) * 100) >> 22) / 2;
+				motor[left] =			(((y2 * y2 * y2 + x2 * x2 * x2) * 100) >> 21) / 2;
+				motor[right] =		(((y2 * y2 * y2 - x2 * x2 * x2) * 100) >> 21) / 2;
 			}
 			else {
 				motor[left] = 0;
@@ -103,15 +103,25 @@ task main()
 
 		if (joy2Btn(4) == 1 && joy2Btn(2) == 0)
 		{
-			servo[jack1] = ServoValue[jack1] + 5;
-			servo[jack2] = ServoValue[jack2] - 5;
+			servo[jack] = ServoValue[jack] + 5;
 		}
 		else if(joy2Btn(2) == 1 && joy2Btn(4) == 0)
 		{
-			servo[jack1] = ServoValue[jack1] - 5;
-			servo[jack2] = ServoValue[jack2] + 5;
+			servo[jack] = ServoValue[jack] - 5;
 		}
 
+		if(joystick.joy1_TopHat == 0 && joystick.joy1_TopHat != 4)
+		{
+			motor[elevator] = 100;
+		}
+		else if(joystick.joy1_TopHat == 4 && joystick.joy1_TopHat != 0)
+		{
+			motor[elevator] = -100;
+		}
+		else
+		{
+			motor[elevator] = 0;
+		}
 
 		if(joystick.joy2_TopHat == 0 && joystick.joy2_TopHat != 4)
 		{
