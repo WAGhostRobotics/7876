@@ -32,6 +32,8 @@ void initializeRobot()
 	motor[right] = 0;
 	motor[lift1] = 0;
 	motor[lift2] = 0;
+	servo[bucket] = 0;
+	servo[grab] = 0;
 	nMotorEncoder[left] = 0;
 	//TODO: figure out servo initialization values
 }
@@ -88,41 +90,49 @@ task main()
 			servo[grab] = ServoValue[grab] - 5;
 		}
 
-		if(joy2Btn(5) == 1 && joy2Btn(6) == 0)
+		int joy2y1 = joystick.joy2_y1;
+		if(abs(joy2y1) < 10)
 		{
-			motor[lift1] = 100;
+			joy2y1 = 0;
 		}
 
-		else if(joy2Btn(5) == 0 && joy2Btn(6) == 1)
+		motor[lift1] = joy2y1;
+
+		int joy2y2 = -joystick.joy2_y2;
+		if(abs(joy2y2) < 10)
 		{
-			motor[lift1] = -100;
-		}
-		else
-		{
-			motor[lift1] = 0;
-		}
-		if(joy2Btn(7) == 1 && joy2Btn(8) == 0)
-		{
-			motor[lift2] = -100;
+			joy2y2 = 0;
 		}
 
-		else if(joy2Btn(7) == 0 && joy2Btn(8) == 1)
-		{
-			motor[lift2] = 100;
-		}
-
-		else
-		{
-			motor[lift2] = 0;
-		}
+		motor[lift2] = joy2y2;
 
 		if(joystick.joy2_TopHat == 0 && joystick.joy2_TopHat != 4)
 		{
-			servo[bucket] = ServoValue[bucket] + 4;
+			servo[bucket] = 0;
 		}
 		else if(joystick.joy2_TopHat == 4 && joystick.joy2_TopHat != 0)
 		{
-			servo[bucket] = ServoValue[bucket] - 4;
+			servo[bucket] = 255;
 		}
+
+
+		//spinner
+		if(joy2btn(7) == 1 && joy2Btn(8) == 0)
+		{
+			motor[spinner] = 100;
+		}
+		else if(joy2btn(8) == 1 && joy2Btn(7) == 0)
+		{
+				motor[spinner] = -100;
+		}else if(joy2btn(5) == 1 && joy2Btn(6) == 0)
+		{
+				motor[spinner] = 20;
+		}
+		else if(joy2btn(6) == 1 && joy2Btn(5) == 0)
+		{
+				motor[spinner] = -20;
+		}
+
+		print(servovalue[bucket],3);
 	}
 }
